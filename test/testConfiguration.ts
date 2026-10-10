@@ -18,6 +18,7 @@ export class Configuration implements IConfiguration {
   tildeop = false;
   useSystemClipboard = false;
   useCtrlKeys = false;
+  deferToVSCodeShortcuts = false;
   overrideCopy = true;
   textwidth = 80;
   hlsearch = false;
