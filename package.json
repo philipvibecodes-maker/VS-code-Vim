@@ -85,7 +85,7 @@
       {
         "key": "ctrl+home",
         "command": "extension.vim_ctrl+home",
-        "when": "editorTextFocus && vim.active && !inDebugRepl && vim.mode != 'Insert'"
+        "when": "editorTextFocus && vim.active && !inDebugRepl && vim.mode != 'Insert' && vim.use<C-Home>"
       },
       {
         "key": "End",
@@ -95,7 +95,7 @@
       {
         "key": "ctrl+end",
         "command": "extension.vim_ctrl+end",
-        "when": "editorTextFocus && vim.active && !inDebugRepl && vim.mode != 'Insert'"
+        "when": "editorTextFocus && vim.active && !inDebugRepl && vim.mode != 'Insert' && vim.use<C-End>"
       },
       {
         "key": "Insert",
@@ -120,7 +120,7 @@
       {
         "key": "shift+tab",
         "command": "extension.vim_shift+tab",
-        "when": "editorTextFocus && vim.active && vim.mode != 'Insert' && !inDebugRepl"
+        "when": "editorTextFocus && vim.active && vim.mode != 'Insert' && !inDebugRepl && vim.use<S-tab>"
       },
       {
         "key": "left",
@@ -345,22 +345,22 @@
       {
         "key": "ctrl+up",
         "command": "extension.vim_ctrl+up",
-        "when": "editorTextFocus && vim.active && vim.mode != 'Insert' && !inDebugRepl"
+        "when": "editorTextFocus && vim.active && vim.mode != 'Insert' && !inDebugRepl && vim.use<C-up>"
       },
       {
         "key": "ctrl+down",
         "command": "extension.vim_ctrl+down",
-        "when": "editorTextFocus && vim.active && vim.mode != 'Insert' && !inDebugRepl"
+        "when": "editorTextFocus && vim.active && vim.mode != 'Insert' && !inDebugRepl && vim.use<C-down>"
       },
       {
         "key": "ctrl+left",
         "command": "extension.vim_ctrl+left",
-        "when": "editorTextFocus && vim.active && vim.mode != 'Insert' && !inDebugRepl"
+        "when": "editorTextFocus && vim.active && vim.mode != 'Insert' && !inDebugRepl && vim.use<C-left>"
       },
       {
         "key": "ctrl+right",
         "command": "extension.vim_ctrl+right",
-        "when": "editorTextFocus && vim.active && vim.mode != 'Insert' && !inDebugRepl"
+        "when": "editorTextFocus && vim.active && vim.mode != 'Insert' && !inDebugRepl && vim.use<C-right>"
       },
       {
         "key": "ctrl+pagedown",
@@ -427,14 +427,14 @@
         "linux": "shift+alt+down",
         "mac": "cmd+alt+down",
         "command": "extension.vim_cmd+alt+down",
-        "when": "editorTextFocus && vim.active && !inDebugRepl"
+        "when": "editorTextFocus && vim.active && !inDebugRepl && (vim.use<C-alt+down> || vim.use<D-alt+down> || vim.use<S-alt+down>)"
       },
       {
         "key": "ctrl+alt+up",
         "linux": "shift+alt+up",
         "mac": "cmd+alt+up",
         "command": "extension.vim_cmd+alt+up",
-        "when": "editorTextFocus && vim.active && !inDebugRepl"
+        "when": "editorTextFocus && vim.active && !inDebugRepl && (vim.use<C-alt+up> || vim.use<D-alt+up> || vim.use<S-alt+up>)"
       },
       {
         "key": "j",
@@ -836,6 +836,11 @@
             "<C-s>": false,
             "<C-z>": false
           }
+        },
+        "vim.deferToVSCodeShortcuts": {
+          "type": "boolean",
+          "markdownDescription": "Let VS Code handle every key combination that is also bound by one of VS Code's own shortcuts, instead of VSCodeVim. `vim.handleKeys` still takes precedence, so set a key to `true` there to keep Vim's action for it, or to `false` to delegate a key VS Code doesn't conflict with.",
+          "default": false
         },
         "vim.statusBarColorControl": {
           "type": "boolean",

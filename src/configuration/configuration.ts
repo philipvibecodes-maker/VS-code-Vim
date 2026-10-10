@@ -6,6 +6,7 @@ import { configurationValidator } from './configurationValidator';
 import { decoration } from './decoration';
 import { ValidatorResults } from './iconfigurationValidator';
 import { Notation } from './notation';
+import { vscodeConflictingKeys } from './vscodeConflictingKeys';
 
 import {
   Digraph,
@@ -99,7 +100,7 @@ interface IKeyBinding {
  * 4. VSCodeVim configuration default values
  *
  */
-class Configuration implements IConfiguration {
+export class Configuration implements IConfiguration {
   [key: string]: any;
 
   private readonly leaderDefault = '\\';
@@ -178,24 +179,7 @@ class Configuration implements IConfiguration {
     decoration.load(this);
 
     for (const boundKey of this.boundKeyCombinations) {
-      // By default, all key combinations are used
-      let useKey = true;
-
-      const handleKey = this.handleKeys[boundKey.key];
-      if (handleKey !== undefined) {
-        // enabled/disabled through `vim.handleKeys`
-        useKey = handleKey;
-      } else if (!this.useCtrlKeys && boundKey.key.slice(1, 3) === 'C-') {
-        // user has disabled CtrlKeys and the current key is a CtrlKey
-        // <C-c>, still needs to be captured to overrideCopy
-        if (boundKey.key === '<C-c>' && this.overrideCopy) {
-          useKey = true;
-        } else {
-          useKey = false;
-        }
-      }
-
-      void VSCodeContext.set(`vim.use${boundKey.key}`, useKey);
+      void VSCodeContext.set(`vim.use${boundKey.key}`, this.resolveUseKey(boundKey.key));
     }
 
     void VSCodeContext.set('vim.overrideCopy', this.overrideCopy);
@@ -206,6 +190,30 @@ class Configuration implements IConfiguration {
     this.loadListeners.forEach((listener) => listener());
 
     return validatorResults;
+  }
+
+  /**
+   * Whether VSCodeVim handles `key` itself (true) or leaves it to VS Code (false).
+   */
+  public resolveUseKey(key: string): boolean {
+    const handleKey = this.handleKeys[key];
+    if (handleKey !== undefined) {
+      // enabled/disabled through `vim.handleKeys`
+      return handleKey;
+    }
+
+    if (!this.useCtrlKeys && key.slice(1, 3) === 'C-') {
+      // user has disabled CtrlKeys and the current key is a CtrlKey
+      // <C-c>, still needs to be captured to overrideCopy
+      return key === '<C-c>' && this.overrideCopy;
+    }
+
+    if (this.deferToVSCodeShortcuts && vscodeConflictingKeys().has(key)) {
+      return false;
+    }
+
+    // By default, all key combinations are used
+    return true;
   }
 
   getConfiguration(section: string = ''): RemoveIndex<vscode.WorkspaceConfiguration> {
@@ -230,6 +238,8 @@ class Configuration implements IConfiguration {
   tildeop = false;
 
   handleKeys: IHandleKeys = {};
+
+  deferToVSCodeShortcuts = false;
 
   useSystemClipboard = false;
 

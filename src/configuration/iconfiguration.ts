@@ -100,6 +100,11 @@ export interface IConfiguration {
   useCtrlKeys: boolean;
 
   /**
+   * Defer keys that conflict with VS Code's own shortcuts to VS Code.
+   */
+  deferToVSCodeShortcuts: boolean;
+
+  /**
    * Override default VSCode copy behavior.
    */
   overrideCopy: boolean;
